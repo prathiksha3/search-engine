@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Scraping</title>
+    <link rel="icon" href="./static/ico.png">
+    <style>
+        body {
+            background-image:url(./static/new.jpg);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: darkblue;
+            color: white;
+        }
+
+
+        form {
+            text-align: center;
+            padding: 20px;
+        }
+
+
+        input[type="url"] {
+            width: 60%;
+            padding: 10px;
+            background:white;
+            color:black;
+        }
+
+
+        .butt{
+            background-color: darkblue;
+            color: white;
+            border-radius: 5px;
+            width:100px;
+            height: 40px;
+            border: none;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: box-shadow 0.15s;
+      
+        }
+        .butt:hover{
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);
+        }
+
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+
+
+        .box {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+
+        li {
+            margin: 10pxpx;
+        }
+
+        
+        span {
+            color: green;
+        }
+    </style>
+</head>
+<body >
+    
+    <h1>Web Scraping Tool</h1>
+    <form action="/scrape" method="POST">
+
+        <input placeholder="Enter The URL..." type="url" name="url"   required><br><br>
+        <button class="butt">Scrape</button>
+    </form>
+    <div class="container">
+        <div class="box">
+            <h2>Email Addresses:</h2>
+            <ul id="email"></ul>
+        </div>
+        <div class="box">
+            <h2>Mobile Number:</h2>
+            <ul id="mobile"></ul>
+        </div>
+        <div class="box">
+            <h2>Social Media Links:</h2>
+            <ul id="social"></ul>
+        </div>
+    </div>
+    <script>
+        // JavaScript code to update the extracted data
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailList = document.getElementById('email');
+            const mobileList = document.getElementById('mobile');
+            const socialList = document.getElementById('social');
+
+            document.querySelector('form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const url = e.target.querySelector('input').value;
+                const response = await fetch('/scrape', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `url=${url}`
+                });
+                const data = await response.json();
+
+                // Update email list
+                emailList.innerHTML = data.email.map(email => `<li>${email}</li>`).join('');
+
+                // Update mobile list
+                mobileList.innerHTML = data.mobile.map(mobile => `<li>${mobile}</li>`).join('');
+
+                // Update social media links list
+                socialList.innerHTML = data.social.map(link => `<li><a href="${link}" target="_blank">${link}</a></li>`).join('');
+            });
+        });
+    </script>
+</body>
+</html>
